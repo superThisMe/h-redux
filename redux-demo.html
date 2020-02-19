@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Redux</title>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.5/redux.min.js'></script>
+    <script type="text/javascript">
+
+        // 1. Redux Library check
+        // console.log(Redux);
+
+        // 2. Define Action name (Optional)
+        const INCREMENT = "INCREMENT";
+        const DECREMENT = "DECREMENT";
+
+        // 3. Define Action Create Function (Optional)
+        const increment = (amount) => ({
+            type: INCREMENT,    // (Essential) Distinguish Action Type
+            amount: amount,     // (Optional)
+            opt1: 1,            // (Optional)
+            opt2: 2             // (Optional)
+        });
+        const decrement = (amount) => {
+            return {
+                type: DECREMENT,    // (Essential) Distinguish Action Type
+                amount: amount,     // (Optional)
+            }
+        }
+
+        // console.log(increment(10));
+        // console.log(decrement(100));
+
+        // 4-1. Define State Data (Essential)
+        const initialState = {
+            number: 0
+        }
+
+        // 4-2. Reducer == Define State Data Management Function (Essential) : Change State with Action
+        function counter(state = initialState, action) {
+            switch (action.type) {
+                case INCREMENT: return { ...state, number: state.number + action.amount };
+                case DECREMENT: return { ...state, number: state.number - action.amount };
+                default: return state;
+            }
+        }
+
+        // 5. Make Store (Essential)
+        const { createStore } = Redux;
+        const store = createStore(counter);
+
+        // 6. Subscribe : Request notice When State Changed
+        // store.subscribe( () => {
+        //     console.log("1");
+        //     console.log(store.getState());
+        // });
+        // store.subscribe( () => {
+        //     console.log("2");
+        //     console.log(store.getState());
+        // });
+
+        // 7. Notice changed State to Store
+        // store.dispatch(increment(10)); // -> call reducer -> call subscribe function
+        // store.dispatch(decrement(5)); // -> call reducer -> call subscribe function
+
+        window.addEventListener("load", function() {
+            const message = document.querySelector("#message");
+            const { number } = store.getState();
+            message.innerHTML = number;
+
+            store.subscribe( () => {
+                const { number } = store.getState();
+                message.innerHTML = number;
+            } );
+
+            document.querySelector("#increase")
+                    .addEventListener("click", function(e) {
+                        store.dispatch(increment(1));
+                    });
+            document.querySelector("#decrease")
+                    .addEventListener("click", function(e) {
+                        store.dispatch(decrement(1));
+                    });
+        });
+    </script>
+</head>
+
+<body>
+
+    <div id="message"></div>
+    <hr />
+    <input type="button" id="increase" value="+">
+    <input type="button" id="decrease" value="-">
+
+</body>
+
+</html>

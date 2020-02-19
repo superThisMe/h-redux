@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.5/redux.min.js"></script>
+        <script type="text/javascript">
+        // 1. Redux 라이브러리 확인
+        //console.log(Redux);
+
+        //2. 액션 이름 정의 (선택적)
+        const INCREMENT = "INCREMENT";
+        const DECREMENT = "DECREMENT";
+
+        //3. 액션 생성 함수 정의 (선택적)
+        const increment = (amount) => ({
+            type: INCREMENT,    // 필수 요소 ( 액션 종류 구분하는 용도 )
+            amount: amount,     // 선택 요소 ( 액션 관련 데이터 0)
+            opt1: 1,            // 선택 요소 ( 액션 관련 데이터 1)
+            opt2: 2             // 선택 요소 ( 액션 관련 데이터 2)            
+        });
+        const decrement = (amount) => ({
+            type: DECREMENT,    // 필수 요소 ( 액션 종류 구분하는 용도 )
+            amount: amount,     // 선택 요소
+        });
+
+        console.log(increment(10));
+        console.log(decrement(100));
+
+        //4-1. 상태 데이터 정의 (필수)
+        const initialState = {
+            number: 0
+        }
+
+        //4-2. 상태 데이터 관리 함수(Reducer) 정의 (필수) : 액션에 따라 상태 변화 처리
+        function counter( state = initialState, action ) {
+            switch (action.type) {
+                case INCREMENT: return { ...state, number: state.number + action.amount };
+                case DECREMENT: return { ...state, number: state.number - action.amount };
+                default : return state;
+            }
+        }
+
+        //5. Store 만들기 (필수)
+        const { createStore } = Redux;
+        const store = createStore(counter);
+
+        //6. 구독 (Subscription) : 상태 변화에 대한 알림 요청 
+        //                        (상태 변화가 발생하면 호출할 함수 등록)
+        // store.subscribe( () => {
+        //     console.log("1");
+        //     console.log( store.getState() );
+        // } );
+        // store.subscribe( () => {
+        //     console.log("2");
+        //     console.log( store.getState() );
+        // } );
+
+        //7. store에 상태 변경 통지
+        //store.dispatch(increment(10)); // --> reducer 호출 --> subscription 함수 호출
+        //store.dispatch(decrement(5));
+
+        window.addEventListener("load", function(e) {
+            const message = document.querySelector("#message");
+            const { number } = store.getState();
+            message.innerHTML = number;
+
+            store.subscribe( () => {
+                const { number } = store.getState();
+                message.innerHTML = number;
+            } );
+
+            document.querySelector("#increase")
+                    .addEventListener("click", function(e) {
+                        store.dispatch(increment(1));
+                    });
+            document.querySelector("#decrease")
+                    .addEventListener("click", function(e) {
+                        store.dispatch(decrement(1));
+                    });
+        });
+
+        </script>
+    </head>
+    <body>
+        <div id="message"></div>
+        <hr>
+        <input type="button" id="increase" value="+">
+        <input type="button" id="decrease" value="-">
+    </body>
+</html>
